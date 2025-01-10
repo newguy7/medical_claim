@@ -19,6 +19,8 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from src.exception import CustomException
 from src.logger import logging
 
+from src.utils import save_object
+
 
 @dataclass
 class DataTransformationConfig:
@@ -33,8 +35,8 @@ class DataTransformation:
         This function is responsible for data transformation
         '''
         try:
-            numerical_columns = ['Amount', 'Severity', 'Age', 'Private Attorney', 'Marital Status']
-            categorical_columns = ['Specialty', 'Insurance', 'Gender']
+            numerical_columns = ['Private Attorney', 'Marital Status', 'Attorney_Severity']
+            categorical_columns = ['Specialty', 'Insurance', 'Gender', 'Age Group', 'Severity Category']
 
             num_pipeline = Pipeline(
                 steps = [
@@ -69,7 +71,7 @@ class DataTransformation:
             raise CustomException(e,sys)
         
     
-    def initiate_data_transforamtion(self, train_path, test_path):
+    def initiate_data_transformation(self, train_path, test_path):
         try:
             train_df = pd.read_csv(train_path)
             test_df = pd.read_csv(test_path)
@@ -79,7 +81,7 @@ class DataTransformation:
             logging.info("Applying feature engineering...")
 
             # create Age Group
-            train_df['Age Group'] = pd.cut(train_df['Age'], bins=[0.20,40,60,80,100],labels=['0-20', '21-40', '41-60', '61-80', '80+'])
+            train_df['Age Group'] = pd.cut(train_df['Age'], bins=[0,20,40,60,80,100],labels=['0-20', '21-40', '41-60', '61-80', '80+'])
             test_df['Age Group'] = pd.cut(test_df['Age'], bins=[0, 20, 40, 60, 80, 100], labels=['0-20', '21-40', '41-60', '61-80', '80+'])
 
             # Create Severity Category
@@ -93,3 +95,84 @@ class DataTransformation:
             logging.info("Feature engineering completed.")
 
             logging.info("Obtaining preprocessing object")
+
+            preprocessor_obj = self.get_data_transformer_obj()
+            
+
+            target_column_name = 'Amount'
+            # non_feature_columns = 'Age','Severity'
+          
+
+            input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
+            target_feature_train_df = train_df[target_column_name]           
+            
+
+            input_feature_test_df = test_df.drop(columns=[target_column_name], axis=1)
+            target_feature_test_df = test_df[target_column_name]
+            
+
+            logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
+
+
+            input_feature_train_array = preprocessor_obj.fit_transform(input_feature_train_df)
+            input_feature_test_array = preprocessor_obj.transform(input_feature_test_df)   
+
+            # Convert sparse matrix to dense NumPy array
+            input_feature_train_array = input_feature_train_array.toarray()
+
+            # Ensure target array is 2D            
+            target_feature_train_array = target_feature_train_df.to_numpy().reshape(-1, 1) #added         
+
+            # Convert sparse matrix to dense NumPy array
+            input_feature_test_array = input_feature_test_array.toarray()
+
+            # Ensure target array is 2D            
+            target_feature_test_array = target_feature_test_df.to_numpy().reshape(-1, 1) #added 
+
+            # Ensure both arrays have matching rows
+            assert input_feature_train_array.shape[0] == target_feature_train_array.shape[0], \
+                "Mismatch in number of rows between input features and target feature."
+            
+            # # Ensure input feature array is 2D
+            # print("input_feature_train_array shape:", input_feature_train_array.shape)
+
+            # # Ensure target feature array is 2D
+            # print("target_feature_train_array shape:", target_feature_train_array.shape)
+
+            # # Ensure the arrays are NumPy arrays
+            # print("Type of input_feature_train_array:", type(input_feature_train_array))
+            # print("Type of target_feature_train_array:", type(target_feature_train_array))
+            
+            # Concatenate input features and target
+            # train_arr = np.concatenate([input_feature_train_array, target_feature_train_array], axis=1)
+
+            # test_arr = np.concatenate([input_feature_test_array, target_feature_test_array], axis=1)
+
+            train_arr = np.c_[
+                input_feature_train_array, target_feature_train_array
+            ]          
+
+
+            test_arr = np.c_[
+                input_feature_test_array, target_feature_test_array
+            ]        
+            
+
+            logging.info(f"Saved preprocessing object.")
+
+            save_object(
+                file_path= self.data_transformation_config.preprocessor_obj_file_path,
+                obj = preprocessor_obj
+            )
+
+            
+            return (
+                train_arr,
+                test_arr,
+                self.data_transformation_config.preprocessor_obj_file_path
+            )
+        
+        except Exception as e:
+            raise CustomException(e,sys)
+
+
