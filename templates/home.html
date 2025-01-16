@@ -6,16 +6,18 @@
     <title>Medical Claim Estimator</title>
 </head>
 <body>
-    <div class="'login">
+    <div class="login">
         <h1>Medical Claim Predictor</h1>
 
-        <form action="{{url_for('predict_datapoint')}}" method="post">
-            <h1>
+        <form id="predictionForm" action="{{url_for('predict_datapoint')}}" method="post">
+            <fieldset>
                 <legend>Medical Claim Amount Predictor</legend>
-            </h1>
+            </fieldset>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
             <div class="mb-3">
                 <label class="form-label">Private Attorney</label>
-                <select class="form-control" name="Private_Attorney" placeholder="Enter 0 for No & 1 for Yes" required>
+                <select class="form-control" id="PrivateAttorney" name="Private_Attorney" required>
                     <option class="placeholder" selected disabled value="">Select Private Attorney Value</option>
                     <option value="0">
                         No Private Attorney
@@ -27,8 +29,8 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Marital Status</label>
-                <select class="form-control" name="Marital_Status" placeholder="Enter your Maritial Status" required>
-                    <option class="placeholder" selected disabled value="">Select Maritial Status Value</option>
+                <select class="form-control" name="Marital_Status" required>
+                    <option class="placeholder" selected disabled value="">Select Marital Status Value</option>
                     <option value="0">
                         Divorced
                     </option>
@@ -47,8 +49,8 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label class="form-label">Marital Status</label>
-                <select class="form-control" name="Specialty" placeholder="Enter Specialty of the physician" required>
+                <label class="form-label">Specialty</label>
+                <select class="form-control" name="Specialty" required>
                     <option class="placeholder" selected disabled value="">Select Specialty Value</option>
                     <option value="Family Practice">
                         Family Practice
@@ -104,12 +106,103 @@
                     <option value="Physical Medicine">
                         Physical Medicine
                     </option>
-                    <option value="Plastic Surgeon' 'Dermatology">
-                        Plastic Surgeon' 'Dermatology
-                    </option>                    
+                    <option value="Plastic Surgeon">
+                        Plastic Surgeon
+                    </option>  
+                    <option value="Dermatology">
+                        Dermatology
+                    </option>                  
                 </select>
             </div>
+            <div class="mb-3">
+                <label class="form-label">Insurance</label>
+                <select class="form-control" name="Insurance" required>
+                    <option class="placeholder" selected disabled value="">Select Insurance Value</option>
+                    <option value="Private">
+                        Private
+                    </option>
+                    <option value="No Insurance">
+                        No Insurance
+                    </option>
+                    <option value="Unknown">
+                        Unknown
+                    </option>
+                    <option value="Medicare/Medicaid">
+                        Medicare/Medicaid
+                    </option>                                                                          
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Gender</label>
+                <select class="form-control" name="Gender" required>
+                    <option class="placeholder" selected disabled value="">Select Gender Value</option>
+                    <option value="Female">
+                        Female
+                    </option>
+                    <option value="Male">
+                        Male
+                    </option>                                                                                              
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Age Group</label>
+                <select class="form-control" name="Age_Group" required>
+                    <option class="placeholder" selected disabled value="">Select Age Group</option>
+                    <option value="0-20">
+                        0-20
+                    </option>
+                    <option value="21-40">
+                        21-40
+                    </option>
+                    <option value="41-60">
+                        41-60
+                    </option>
+                    <option value="61-80">
+                        61-80
+                    </option>
+                    <option value="80+">
+                        80+
+                    </option>
+                </select>
+            </div>             
+            <div class="mb-3">
+                <label class="form-label">Severity Score out of 10</label>
+                <input class="form-control" type="number" id="Severity" name="Severity"
+                    min='1' max='10' required />
+            </div>  
+            
+            <div class="mb-3">
+                <label class="form-label">Attorney Severity</label>
+                <input class="form-control" type="number" id="AttorneySeverity" name="Attorney_Severity" 
+                       readonly />
+            </div>
+
+            <div class="mb-3">
+                <input class="btn btn-primary" type="submit" value="Predicted Medical Claim Amount" />
+            </div>
         </form>
+
+        <script>
+            document.addEventListener('input', function () {
+                const privateAttorney = document.getElementById('PrivateAttorney').value;
+                const severity = document.getElementById('Severity').value;
+        
+                // Calculate Attorney Severity if both fields have valid inputs
+                if (!isNaN(privateAttorney) && !isNaN(severity) && privateAttorney !== "" && severity !== "") {
+                    const attorneySeverity = parseInt(privateAttorney) * parseInt(severity);
+                    document.getElementById('AttorneySeverity').value = attorneySeverity;
+                } else {
+                    document.getElementById('AttorneySeverity').value = "";
+                }
+            });
+        </script>
+        <h2>
+            {% if results %}
+                The prediction is {{ results }}
+            {% else %}
+                No prediction available yet.
+            {% endif %}
+        </h2>
     </div>
 </body>
 </html>

@@ -35,8 +35,8 @@ class DataTransformation:
         This function is responsible for data transformation
         '''
         try:
-            numerical_columns = ['Private Attorney', 'Marital Status', 'Attorney_Severity']
-            categorical_columns = ['Specialty', 'Insurance', 'Gender', 'Age Group', 'Severity Category']
+            numerical_columns = ['Private Attorney', 'Marital Status', 'Severity','Attorney_Severity']
+            categorical_columns = ['Specialty', 'Insurance', 'Gender', 'Age Group']
 
             num_pipeline = Pipeline(
                 steps = [
@@ -82,11 +82,7 @@ class DataTransformation:
 
             # create Age Group
             train_df['Age Group'] = pd.cut(train_df['Age'], bins=[0,20,40,60,80,100],labels=['0-20', '21-40', '41-60', '61-80', '80+'])
-            test_df['Age Group'] = pd.cut(test_df['Age'], bins=[0, 20, 40, 60, 80, 100], labels=['0-20', '21-40', '41-60', '61-80', '80+'])
-
-            # Create Severity Category
-            train_df['Severity Category'] = pd.cut(train_df['Severity'], bins=[1, 3, 6, 9], labels=['Low', 'Medium', 'High'])
-            test_df['Severity Category'] = pd.cut(test_df['Severity'], bins=[1, 3, 6, 9], labels=['Low', 'Medium', 'High'])
+            test_df['Age Group'] = pd.cut(test_df['Age'], bins=[0, 20, 40, 60, 80, 100], labels=['0-20', '21-40', '41-60', '61-80', '80+'])            
 
             # Create Interaction Term
             train_df['Attorney_Severity'] = train_df['Private Attorney'] * train_df['Severity']
@@ -99,8 +95,7 @@ class DataTransformation:
             preprocessor_obj = self.get_data_transformer_obj()
             
 
-            target_column_name = 'Amount'
-            # non_feature_columns = 'Age','Severity'
+            target_column_name = 'Amount'            
           
 
             input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)

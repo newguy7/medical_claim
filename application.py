@@ -26,7 +26,7 @@ def predict_datapoint():
             Insurance = request.form.get('Insurance'),
             Gender = request.form.get('Gender'),
             Age_Group = request.form.get('Age_Group'),
-            Severity_Category = request.form.get('Severity_Category'),
+            Severity = int(request.form.get('Severity')),
             Attorney_Severity = int(request.form.get('Attorney_Severity'))
         )
         pred_df = data.get_data_as_data_frame()
