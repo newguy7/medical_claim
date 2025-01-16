@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Claim Estimator</title>
+</head>
+<body>
+    <div class="'login">
+        <h1>Medical Claim Predictor</h1>
+
+        <form action="{{url_for('predict_datapoint')}}" method="post">
+            <h1>
+                <legend>Medical Claim Amount Predictor</legend>
+            </h1>
+            <div class="mb-3">
+                <label class="form-label">Private Attorney</label>
+                <select class="form-control" name="Private_Attorney" placeholder="Enter 0 for No & 1 for Yes" required>
+                    <option class="placeholder" selected disabled value="">Select Private Attorney Value</option>
+                    <option value="0">
+                        No Private Attorney
+                    </option>
+                    <option value="1">
+                        Private Attorney
+                    </option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Marital Status</label>
+                <select class="form-control" name="Marital_Status" placeholder="Enter your Maritial Status" required>
+                    <option class="placeholder" selected disabled value="">Select Maritial Status Value</option>
+                    <option value="0">
+                        Divorced
+                    </option>
+                    <option value="1">
+                        Single
+                    </option>
+                    <option value="2">
+                        Married
+                    </option>
+                    <option value="3">
+                        Widowed
+                    </option>
+                    <option value="4">
+                        Unknown
+                    </option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Marital Status</label>
+                <select class="form-control" name="Specialty" placeholder="Enter Specialty of the physician" required>
+                    <option class="placeholder" selected disabled value="">Select Specialty Value</option>
+                    <option value="Family Practice">
+                        Family Practice
+                    </option>
+                    <option value="OBGYN">
+                        OBGYN
+                    </option>
+                    <option value="Cardiology">
+                        Cardiology
+                    </option>
+                    <option value="Pediatrics">
+                        Pediatrics
+                    </option>
+                    <option value="Internal Medicine">
+                        Internal Medicine
+                    </option>
+                    <option value="Anesthesiology">
+                        Anesthesiology
+                    </option>
+                    <option value="Emergency Medicine">
+                        Emergency Medicine
+                    </option>
+                    <option value="Ophthamology">
+                        Ophthamology
+                    </option>
+                    <option value="Urological Surgery">
+                        Urological Surgery
+                    </option>
+                    <option value="Orthopedic Surgery">
+                        Orthopedic Surgery
+                    </option>
+                    <option value="Neurology/Neurosurgery">
+                        Neurology/Neurosurgery
+                    </option>
+                    <option value="Occupational Medicine">
+                        Occupational Medicine
+                    </option>
+                    <option value="Resident">
+                        Resident
+                    </option>
+                    <option value="Thoracic Surgery">
+                        Thoracic Surgery
+                    </option>
+                    <option value="General Surgery">
+                        General Surgery
+                    </option>
+                    <option value="Radiology">
+                        Radiology
+                    </option>
+                    <option value="Pathology">
+                        Pathology
+                    </option>
+                    <option value="Physical Medicine">
+                        Physical Medicine
+                    </option>
+                    <option value="Plastic Surgeon' 'Dermatology">
+                        Plastic Surgeon' 'Dermatology
+                    </option>                    
+                </select>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
